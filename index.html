@@ -371,6 +371,8 @@ function offsetLabel(min){
 }
 // Hardcoded codes/cities for the tournament window (Jun–Jul 2026), ordered by UTC offset.
 const ZONES = [
+  {tz:'Pacific/Honolulu', city:'Honolulu', code:'HST', off:-600},
+  {tz:'America/Anchorage', city:'Anchorage', code:'AKDT', off:-480},
   {tz:'America/Los_Angeles', city:'Los Angeles', code:'PDT', off:-420},
   {tz:'America/Denver', city:'Denver', code:'MDT', off:-360},
   {tz:'America/Mexico_City', city:'Mexico City', code:'CST', off:-360},
@@ -378,6 +380,8 @@ const ZONES = [
   {tz:'America/New_York', city:'New York', code:'EDT', off:-240},
   {tz:'America/Argentina/Buenos_Aires', city:'Buenos Aires', code:'ART', off:-180},
   {tz:'America/Sao_Paulo', city:'São Paulo', code:'BRT', off:-180},
+  {tz:'Atlantic/Cape_Verde', city:'Cape Verde', code:'UTC-1', off:-60},
+  {tz:'Atlantic/Reykjavik', city:'Reykjavik', code:'GMT', off:0},
   {tz:'Africa/Casablanca', city:'Casablanca', code:'UTC+1', off:60},
   {tz:'Europe/Dublin', city:'Dublin', code:'IST', off:60},
   {tz:'Africa/Lagos', city:'Lagos', code:'WAT', off:60},
@@ -392,11 +396,14 @@ const ZONES = [
   {tz:'Europe/Moscow', city:'Moscow', code:'MSK', off:180},
   {tz:'Asia/Tehran', city:'Tehran', code:'UTC+3:30', off:210},
   {tz:'Asia/Dubai', city:'Dubai', code:'GST', off:240},
+  {tz:'Asia/Tashkent', city:'Tashkent', code:'UTC+5', off:300},
   {tz:'Asia/Kolkata', city:'Kolkata', code:'IST', off:330},
+  {tz:'Asia/Dhaka', city:'Dhaka', code:'UTC+6', off:360},
   {tz:'Asia/Bangkok', city:'Bangkok', code:'ICT', off:420},
   {tz:'Asia/Shanghai', city:'Shanghai', code:'CST', off:480},
   {tz:'Asia/Tokyo', city:'Tokyo', code:'JST', off:540},
   {tz:'Asia/Seoul', city:'Seoul', code:'KST', off:540},
+  {tz:'Australia/Adelaide', city:'Adelaide', code:'ACST', off:570},
   {tz:'Australia/Sydney', city:'Sydney', code:'AEST', off:600},
   {tz:'Pacific/Auckland', city:'Auckland', code:'NZST', off:720},
 ];
