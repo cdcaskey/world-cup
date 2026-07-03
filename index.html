@@ -76,9 +76,10 @@
 
   .controls { position: sticky; top: 0; z-index: 5; margin: 22px -18px 0; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .filterbar { display:flex; align-items:center; gap: 12px; padding: 12px 18px; }
-  .filter-toggle { display:flex; align-items:center; gap: 9px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing:.02em; padding: 9px 14px; border-radius: 999px; cursor: pointer; box-shadow: var(--shadow); transition: border-color .2s; }
-  .filter-toggle:hover { border-color: var(--ink-faint); }
-  .filter-toggle svg { width: 15px; height: 15px; }
+  .filter-toggle, .today-btn { display:flex; align-items:center; gap: 9px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing:.02em; padding: 9px 14px; border-radius: 999px; cursor: pointer; box-shadow: var(--shadow); transition: border-color .2s, opacity .2s; }
+  .filter-toggle:hover, .today-btn:hover:not(:disabled) { border-color: var(--ink-faint); }
+  .filter-toggle svg, .today-btn svg { width: 15px; height: 15px; }
+  .today-btn:disabled { opacity: .45; cursor: not-allowed; }
   .ft-count { display:none; align-items:center; justify-content:center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800; }
   .ft-count.show { display:inline-flex; }
   .chev { transition: transform .28s ease; color: var(--ink-faint); font-size: 11px; }
@@ -101,7 +102,7 @@
   .reset.show { display: inline-block; }
   .reset:hover { text-decoration: underline; }
 
-  .day { margin-top: 30px; animation: rise .5s ease both; }
+  .day { margin-top: 30px; animation: rise .5s ease both; scroll-margin-top: 80px; }
   @keyframes rise { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
   .day-head { display:flex; align-items: baseline; gap: 10px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
   .day-date { font-family:"Anton", sans-serif; font-size: 23px; letter-spacing:.01em; text-transform: uppercase; }
@@ -178,6 +179,10 @@
         Filters
         <span class="ft-count" id="ftCount">0</span>
         <span class="chev">▼</span>
+      </button>
+      <button class="today-btn" id="todayBtn" type="button" aria-label="Skip to today">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="3.5" width="12" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2 6.5h12M5.5 2v2.5M10.5 2v2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Today
       </button>
       <div class="count" id="count"></div>
     </div>
@@ -504,7 +509,7 @@ function render(){
     const day = days.get(key);
     const rounds = [...new Set(day.items.map(i=>i.round))];
     const tag = rounds.map(r=> r==='Group' ? 'Group stage' : r).join(' · ');
-    html += `<section class="day"><div class="day-head"><span class="day-date">${day.label}</span><span class="day-meta">${tag}</span></div>`;
+    html += `<section class="day" data-day="${key}"><div class="day-head"><span class="day-date">${day.label}</span><span class="day-meta">${tag}</span></div>`;
     day.items.forEach(m=>{
       const time = dispTime(m.inst);
       const ldate = dispDate(m.inst);
@@ -553,6 +558,17 @@ function updateFilterState(){
 filterToggle.addEventListener('click', ()=>{
   const open = controls.classList.toggle('open');
   filterToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+
+const todayBtn = document.getElementById('todayBtn');
+todayBtn.addEventListener('click', ()=>{
+  const todayKey = localKey(new Date(), dispTz);
+  const sections = [...listEl.querySelectorAll('.day[data-day]')];
+  if (!sections.length) return;
+  const target = sections.find(s => s.dataset.day === todayKey)
+    || sections.find(s => s.dataset.day > todayKey)
+    || sections[sections.length - 1];
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 resetBtn.addEventListener('click', ()=>{
   daySel.value='all'; stageSel.value='all'; groupSel.value='all'; teamSel.value='all'; venueSel.value='all'; chanSel.value='all';
