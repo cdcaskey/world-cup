@@ -306,45 +306,50 @@ const G = [
   [72,'2026-06-28T00:30:00+01:00','Congo DR','Uzbekistan','K','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
 ];
 
-// KNOCKOUTS — anchored to Eastern (EDT, -04:00). [n, etISO, label, round, venue, city, tz, channel]
+// KNOCKOUTS — anchored to Eastern (EDT, -04:00). [n, etISO, home, away, round, venue, city, tz, channel]
+// home/away are real team names once confirmed, otherwise placeholders like 'Winner M74'.
 const K = [
-  [73,'2026-06-28T15:00:00-04:00','Runner-up A v Runner-up B','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'TBC'],
-  [74,'2026-06-29T16:30:00-04:00','Winner E v 3rd A/B/C/D/F','Round of 32','Gillette Stadium','Boston',TZ.ET,'TBC'],
-  [75,'2026-06-29T21:00:00-04:00','Winner F v Runner-up C','Round of 32','Estadio BBVA','Monterrey',TZ.MTY,'TBC'],
-  [76,'2026-06-29T13:00:00-04:00','Winner C v Runner-up F','Round of 32','NRG Stadium','Houston',TZ.CT,'TBC'],
-  [77,'2026-06-30T17:00:00-04:00','Winner I v 3rd C/D/F/G/H','Round of 32','MetLife Stadium','New York/New Jersey',TZ.ET,'TBC'],
-  [78,'2026-06-30T13:00:00-04:00','Runner-up E v Runner-up I','Round of 32','AT&T Stadium','Dallas',TZ.CT,'TBC'],
-  [79,'2026-06-30T21:00:00-04:00','Winner A v 3rd C/E/F/H/I','Round of 32','Estadio Azteca','Mexico City',TZ.MEX,'TBC'],
-  [80,'2026-07-01T12:00:00-04:00','Winner L v 3rd E/H/I/J/K','Round of 32','Mercedes-Benz Stadium','Atlanta',TZ.ET,'TBC'],
-  [81,'2026-07-01T20:00:00-04:00','Winner D v 3rd B/E/F/I/J','Round of 32',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'TBC'],
-  [82,'2026-07-01T16:00:00-04:00','Winner G v 3rd A/E/H/I/J','Round of 32','Lumen Field','Seattle',TZ.PT,'TBC'],
-  [83,'2026-07-02T19:00:00-04:00','Runner-up K v Runner-up L','Round of 32','BMO Field','Toronto',TZ.TOR,'TBC'],
-  [84,'2026-07-02T15:00:00-04:00','Winner H v Runner-up J','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'TBC'],
-  [85,'2026-07-02T23:00:00-04:00','Winner B v 3rd E/F/G/I/J','Round of 32','BC Place','Vancouver',TZ.VAN,'TBC'],
-  [86,'2026-07-03T18:00:00-04:00','Winner J v Runner-up H','Round of 32','Hard Rock Stadium','Miami',TZ.ET,'TBC'],
-  [87,'2026-07-03T21:30:00-04:00','Winner K v 3rd D/E/I/J/L','Round of 32','Arrowhead Stadium','Kansas City',TZ.CT,'TBC'],
-  [88,'2026-07-03T14:00:00-04:00','Runner-up D v Runner-up G','Round of 32','AT&T Stadium','Dallas',TZ.CT,'TBC'],
-  [89,'2026-07-04T17:00:00-04:00','Winner M74 v Winner M77','Round of 16','Lincoln Financial Field','Philadelphia',TZ.ET,'TBC'],
-  [90,'2026-07-04T13:00:00-04:00','Winner M73 v Winner M75','Round of 16','NRG Stadium','Houston',TZ.CT,'TBC'],
-  [91,'2026-07-05T16:00:00-04:00','Winner M76 v Winner M78','Round of 16','MetLife Stadium','New York/New Jersey',TZ.ET,'TBC'],
-  [92,'2026-07-05T20:00:00-04:00','Winner M79 v Winner M80','Round of 16','Estadio Azteca','Mexico City',TZ.MEX,'TBC'],
-  [93,'2026-07-06T15:00:00-04:00','Winner M83 v Winner M84','Round of 16','AT&T Stadium','Dallas',TZ.CT,'TBC'],
-  [94,'2026-07-06T20:00:00-04:00','Winner M81 v Winner M82','Round of 16','Lumen Field','Seattle',TZ.PT,'TBC'],
-  [95,'2026-07-07T12:00:00-04:00','Winner M86 v Winner M88','Round of 16','Mercedes-Benz Stadium','Atlanta',TZ.ET,'TBC'],
-  [96,'2026-07-07T16:00:00-04:00','Winner M85 v Winner M87','Round of 16','BC Place','Vancouver',TZ.VAN,'TBC'],
-  [97,'2026-07-09T16:00:00-04:00','Winner M89 v Winner M90','Quarter-final','Gillette Stadium','Boston',TZ.ET,'TBC'],
-  [98,'2026-07-10T15:00:00-04:00','Winner M93 v Winner M94','Quarter-final','SoFi Stadium','Los Angeles',TZ.PT,'TBC'],
-  [99,'2026-07-11T17:00:00-04:00','Winner M91 v Winner M92','Quarter-final','Hard Rock Stadium','Miami',TZ.ET,'TBC'],
-  [100,'2026-07-11T21:00:00-04:00','Winner M95 v Winner M96','Quarter-final','Arrowhead Stadium','Kansas City',TZ.CT,'TBC'],
-  [101,'2026-07-14T15:00:00-04:00','Winner M97 v Winner M98','Semi-final','AT&T Stadium','Dallas',TZ.CT,'TBC'],
-  [102,'2026-07-15T15:00:00-04:00','Winner M99 v Winner M100','Semi-final','Mercedes-Benz Stadium','Atlanta',TZ.ET,'TBC'],
-  [103,'2026-07-18T17:00:00-04:00','Loser M101 v Loser M102','Third place','Hard Rock Stadium','Miami',TZ.ET,'TBC'],
-  [104,'2026-07-19T15:00:00-04:00','Winner M101 v Winner M102','Final','MetLife Stadium','New York/New Jersey',TZ.ET,'BOTH'],
+  [73,'2026-06-28T15:00:00-04:00','South Africa','Canada','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'ITV'],
+  [74,'2026-06-29T16:30:00-04:00','Germany','Paraguay','Round of 32','Gillette Stadium','Boston',TZ.ET,'BBC'],
+  [75,'2026-06-29T21:00:00-04:00','Netherlands','Morocco','Round of 32','Estadio BBVA','Monterrey',TZ.MTY,'ITV'],
+  [76,'2026-06-29T13:00:00-04:00','Brazil','Japan','Round of 32','NRG Stadium','Houston',TZ.CT,'ITV'],
+  [77,'2026-06-30T17:00:00-04:00','France','Sweden','Round of 32','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV'],
+  [78,'2026-06-30T13:00:00-04:00','Ivory Coast','Norway','Round of 32','AT&T Stadium','Dallas',TZ.CT,'BBC'],
+  [79,'2026-06-30T21:00:00-04:00','Mexico','Ecuador','Round of 32','Estadio Azteca','Mexico City',TZ.MEX,'ITV'],
+  [80,'2026-07-01T12:00:00-04:00','England','Congo DR','Round of 32','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
+  [81,'2026-07-01T20:00:00-04:00','USA','Bosnia and Herzegovina','Round of 32',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'BBC'],
+  [82,'2026-07-01T16:00:00-04:00','Belgium','Senegal','Round of 32','Lumen Field','Seattle',TZ.PT,'ITV'],
+  [83,'2026-07-02T19:00:00-04:00','Portugal','Croatia','Round of 32','BMO Field','Toronto',TZ.TOR,'BBC'],
+  [84,'2026-07-02T15:00:00-04:00','Spain','Austria','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'BBC'],
+  [85,'2026-07-02T23:00:00-04:00','Switzerland','Algeria','Round of 32','BC Place','Vancouver',TZ.VAN,'BBC'],
+  [86,'2026-07-03T18:00:00-04:00','Argentina','Cape Verde','Round of 32','Hard Rock Stadium','Miami',TZ.ET,'ITV'],
+  [87,'2026-07-03T21:30:00-04:00','Colombia','Ghana','Round of 32','Arrowhead Stadium','Kansas City',TZ.CT,'ITV'],
+  [88,'2026-07-03T14:00:00-04:00','Australia','Egypt','Round of 32','AT&T Stadium','Dallas',TZ.CT,'BBC'],
+  [89,'2026-07-04T17:00:00-04:00','Paraguay','France','Round of 16','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC'],
+  [90,'2026-07-04T13:00:00-04:00','Canada','Morocco','Round of 16','NRG Stadium','Houston',TZ.CT,'ITV'],
+  [91,'2026-07-05T16:00:00-04:00','Brazil','Norway','Round of 16','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV'],
+  [92,'2026-07-05T20:00:00-04:00','Mexico','England','Round of 16','Estadio Azteca','Mexico City',TZ.MEX,'BBC'],
+  [93,'2026-07-06T15:00:00-04:00','Portugal','Spain','Round of 16','AT&T Stadium','Dallas',TZ.CT,'BBC'],
+  [94,'2026-07-06T20:00:00-04:00','USA','Belgium','Round of 16','Lumen Field','Seattle',TZ.PT,'BBC'],
+  [95,'2026-07-07T12:00:00-04:00','Winner M86','Winner M88','Round of 16','Mercedes-Benz Stadium','Atlanta',TZ.ET,'ITV'],
+  [96,'2026-07-07T16:00:00-04:00','Switzerland','Winner M87','Round of 16','BC Place','Vancouver',TZ.VAN,'ITV'],
+  [97,'2026-07-09T16:00:00-04:00','Winner M89','Winner M90','Quarter-final','Gillette Stadium','Boston',TZ.ET,'TBC'],
+  [98,'2026-07-10T15:00:00-04:00','Winner M93','Winner M94','Quarter-final','SoFi Stadium','Los Angeles',TZ.PT,'TBC'],
+  [99,'2026-07-11T17:00:00-04:00','Winner M91','Winner M92','Quarter-final','Hard Rock Stadium','Miami',TZ.ET,'ITV'],
+  [100,'2026-07-11T21:00:00-04:00','Winner M95','Winner M96','Quarter-final','Arrowhead Stadium','Kansas City',TZ.CT,'TBC'],
+  [101,'2026-07-14T15:00:00-04:00','Winner M97','Winner M98','Semi-final','AT&T Stadium','Dallas',TZ.CT,'TBC'],
+  [102,'2026-07-15T15:00:00-04:00','Winner M99','Winner M100','Semi-final','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
+  [103,'2026-07-18T17:00:00-04:00','Loser M101','Loser M102','Third place','Hard Rock Stadium','Miami',TZ.ET,'TBC'],
+  [104,'2026-07-19T15:00:00-04:00','Winner M101','Winner M102','Final','MetLife Stadium','New York/New Jersey',TZ.ET,'BOTH'],
 ];
 
+const PLACEHOLDER_TEAM = /^(Winner|Runner-up|3rd|Loser)\b/;
 const matches = [];
-G.forEach(r => matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:r[4], venue:r[5], city:r[6], tz:r[7], ch:r[8], round:'Group', ko:false }));
-K.forEach(r => matches.push({ n:r[0], inst:new Date(r[1]), label:r[2], group:null, venue:r[4], city:r[5], tz:r[6], ch:r[7], round:r[3], ko:true }));
+G.forEach(r => matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:r[4], venue:r[5], city:r[6], tz:r[7], ch:r[8], round:'Group', ko:false, teamsKnown:true }));
+K.forEach(r => {
+  const teamsKnown = !PLACEHOLDER_TEAM.test(r[2]) && !PLACEHOLDER_TEAM.test(r[3]);
+  matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:null, venue:r[5], city:r[6], tz:r[7], ch:r[8], round:r[4], ko:true, teamsKnown });
+});
 
 // Display time zone (defaults to browser, user-changeable)
 let dispTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London';
@@ -417,7 +422,7 @@ function localKey(d,tz){ return new Intl.DateTimeFormat('en-CA',{ timeZone:tz, y
 function localDateLabel(d,tz){ return new Intl.DateTimeFormat('en-GB',{ timeZone:tz, weekday:'long', day:'numeric', month:'long' }).format(d); }
 function localTime(d,tz){ return new Intl.DateTimeFormat('en-GB',{ timeZone:tz, hour:'2-digit', minute:'2-digit', hour12:false }).format(d); }
 
-const teams = [...new Set(matches.filter(m=>!m.ko).flatMap(m=>[m.home,m.away]))].sort((a,b)=>a.localeCompare(b));
+const teams = [...new Set(matches.filter(m=>m.teamsKnown).flatMap(m=>[m.home,m.away]))].sort((a,b)=>a.localeCompare(b));
 const groups = [...new Set(matches.filter(m=>!m.ko).map(m=>m.group))].sort();
 const dayMap = new Map();
 matches.forEach(m=>{ const k = localKey(m.inst, m.tz); if(!dayMap.has(k)) dayMap.set(k, localDateLabel(m.inst, m.tz)); });
@@ -453,13 +458,11 @@ function chanLabel(ch){ return ch==='BOTH' ? 'BBC + ITV' : ch; }
 function chanClass(ch){ return ch==='BOTH' ? 'both' : ch==='TBC' ? 'tbc' : ch.toLowerCase(); }
 
 function applyStageLocks(){
-  // Group & Channel only apply to the group stage
+  // Group only applies to the group stage (KO matches have no group).
   const locked = stageSel.value !== 'all' && stageSel.value !== 'Group';
-  [ [groupSel,'group'], [chanSel,'channel'] ].forEach(([sel])=>{
-    if (locked){ sel.value = 'all'; sel.disabled = true; }
-    else { sel.disabled = false; }
-    sel.closest('.field').classList.toggle('disabled', locked);
-  });
+  if (locked) groupSel.value = 'all';
+  groupSel.disabled = locked;
+  groupSel.closest('.field').classList.toggle('disabled', locked);
 }
 
 function render(){
@@ -471,7 +474,7 @@ function render(){
     if (s !== 'all' && m.round !== s) return false;
     if (vn !== 'all' && m.venue !== vn) return false;
     if (g !== 'all'){ if (m.ko || m.group !== g) return false; }
-    if (t !== 'all'){ if (m.ko || (m.home !== t && m.away !== t)) return false; }
+    if (t !== 'all'){ if (!m.teamsKnown || (m.home !== t && m.away !== t)) return false; }
     if (c !== 'all'){ if (m.ch !== c && m.ch !== 'BOTH') return false; }
     return true;
   });
@@ -481,7 +484,7 @@ function render(){
   updateFilterState();
 
   if (!filtered.length){
-    listEl.innerHTML = `<div class="empty"><div class="big">No matches</div><div>Try widening your filters. Knockout fixtures are hidden when a group, team or specific channel is selected, since the teams and broadcaster aren't set yet.</div></div>`;
+    listEl.innerHTML = `<div class="empty"><div class="big">No matches</div><div>Try widening your filters. Later knockout fixtures are hidden when a group, team or specific channel is selected, since the teams and broadcaster aren't set yet.</div></div>`;
     return;
   }
 
@@ -502,7 +505,7 @@ function render(){
       const time = dispTime(m.inst);
       const ldate = dispDate(m.inst);
       const abbr = tzAbbr(m.inst);
-      const teamsHtml = m.ko ? `<div class="teams placeholder">${m.label}</div>` : `<div class="teams">${m.home} <span class="v">v</span> ${m.away}</div>`;
+      const teamsHtml = m.teamsKnown ? `<div class="teams">${m.home} <span class="v">v</span> ${m.away}</div>` : `<div class="teams placeholder">${m.home} v ${m.away}</div>`;
       const badge = m.ko ? `<span class="badge ko">${m.round}</span>` : `<span class="badge">Group ${m.group}</span>`;
       html += `
         <div class="match">
