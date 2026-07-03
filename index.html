@@ -125,7 +125,7 @@
   .teams .v { color: var(--ink-faint); font-weight: 600; font-size: 14px; }
   .teams .score { color: var(--ink); font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
   .teams .score .s-dash { color: var(--ink-faint); font-weight: 500; margin: 0 4px; }
-  .teams.placeholder { font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+  .teams .possibles { color: var(--ink-soft); font-weight: 700; font-size: 15px; letter-spacing: .04em; word-break: break-word; }
   .pen-note { margin-top: 4px; font-size: 12px; color: var(--ink-faint); font-weight: 600; letter-spacing:.02em; }
   .meta-row { margin-top: 7px; display:flex; align-items:center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-soft); }
   .badge { font-size: 10.5px; font-weight: 800; letter-spacing:.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); flex: none; }
@@ -353,12 +353,55 @@ const K = [
 ];
 
 const PLACEHOLDER_TEAM = /^(Winner|Runner-up|3rd|Loser)\b/;
+const TEAM_CODE = {
+  'Algeria':'ALG','Argentina':'ARG','Australia':'AUS','Austria':'AUT','Belgium':'BEL',
+  'Bosnia and Herzegovina':'BIH','Brazil':'BRA','Canada':'CAN','Cape Verde':'CPV','Colombia':'COL',
+  'Congo DR':'COD','Croatia':'CRO','Curaçao':'CUW','Czechia':'CZE','Ecuador':'ECU',
+  'Egypt':'EGY','England':'ENG','France':'FRA','Germany':'GER','Ghana':'GHA',
+  'Haiti':'HAI','Iran':'IRN','Iraq':'IRQ','Ivory Coast':'CIV','Japan':'JPN',
+  'Jordan':'JOR','Mexico':'MEX','Morocco':'MAR','Netherlands':'NED','New Zealand':'NZL',
+  'Norway':'NOR','Panama':'PAN','Paraguay':'PAR','Portugal':'POR','Qatar':'QAT',
+  'Saudi Arabia':'KSA','Scotland':'SCO','Senegal':'SEN','South Africa':'RSA','South Korea':'KOR',
+  'Spain':'ESP','Sweden':'SWE','Switzerland':'SUI','Tunisia':'TUN','Türkiye':'TUR',
+  'USA':'USA','Uruguay':'URU','Uzbekistan':'UZB',
+};
 const matches = [];
 G.forEach(r => matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:r[4], venue:r[5], city:r[6], tz:r[7], ch:r[8], score:r[9] ?? null, round:'Group', ko:false, teamsKnown:true }));
 K.forEach(r => {
   const teamsKnown = !PLACEHOLDER_TEAM.test(r[2]) && !PLACEHOLDER_TEAM.test(r[3]);
   matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:null, venue:r[5], city:r[6], tz:r[7], ch:r[8], score:r[9] ?? null, round:r[4], ko:true, teamsKnown });
 });
+const matchByNum = new Map(matches.map(m=>[m.n, m]));
+function matchWinner(m){
+  if (!m || !m.score) return null;
+  const [hs, as, hp, ap] = m.score;
+  if (hp !== undefined) return hp > ap ? m.home : m.away;
+  if (hs > as) return m.home;
+  if (as > hs) return m.away;
+  return null;
+}
+function matchLoser(m){
+  const w = matchWinner(m);
+  return w ? (w === m.home ? m.away : m.home) : null;
+}
+function possibleTeams(side){
+  const parsed = /^(Winner|Loser) M?(\d+)$/.exec(side);
+  if (!parsed) return [side];
+  const target = matchByNum.get(+parsed[2]);
+  if (!target) return [side];
+  if (target.score){
+    const t = parsed[1] === 'Winner' ? matchWinner(target) : matchLoser(target);
+    if (t) return [t];
+  }
+  return [...new Set([...possibleTeams(target.home), ...possibleTeams(target.away)])];
+}
+function renderSide(side){
+  if (!PLACEHOLDER_TEAM.test(side)) return side;
+  const possible = possibleTeams(side);
+  if (possible.length === 1 && !PLACEHOLDER_TEAM.test(possible[0])) return possible[0];
+  const codes = possible.map(t => TEAM_CODE[t] || t).join('/');
+  return `<span class="possibles">${codes}</span>`;
+}
 
 // Display time zone (defaults to browser, user-changeable)
 let dispTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London';
@@ -515,7 +558,7 @@ function render(){
       const ldate = dispDate(m.inst);
       const abbr = tzAbbr(m.inst);
       const sep = m.score ? `<span class="score">${m.score[0]}<span class="s-dash">–</span>${m.score[1]}</span>` : `<span class="v">v</span>`;
-      const teamsHtml = m.teamsKnown ? `<div class="teams">${m.home} ${sep} ${m.away}</div>` : `<div class="teams placeholder">${m.home} v ${m.away}</div>`;
+      const teamsHtml = `<div class="teams">${renderSide(m.home)} ${sep} ${renderSide(m.away)}</div>`;
       const penHtml = (m.score && m.score.length === 4) ? `<div class="pen-note">${(m.score[2] > m.score[3] ? m.home : m.away)} won ${Math.max(m.score[2],m.score[3])}–${Math.min(m.score[2],m.score[3])} on penalties</div>` : '';
       const badge = m.ko ? `<span class="badge ko">${m.round}</span>` : `<span class="badge">Group ${m.group}</span>`;
       html += `
