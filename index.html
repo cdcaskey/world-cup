@@ -399,6 +399,9 @@ function renderSide(side){
   if (!PLACEHOLDER_TEAM.test(side)) return side;
   const possible = possibleTeams(side);
   if (possible.length === 1 && !PLACEHOLDER_TEAM.test(possible[0])) return possible[0];
+  if (possible.length !== 2 || possible.some(t => PLACEHOLDER_TEAM.test(t))) {
+    return `<span class="possibles">${side}</span>`;
+  }
   const codes = possible.map(t => TEAM_CODE[t] || t).join('/');
   return `<span class="possibles">${codes}</span>`;
 }
