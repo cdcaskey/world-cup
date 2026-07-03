@@ -122,7 +122,10 @@
   .info { display:flex; flex-direction: column; justify-content:center; min-width: 0; }
   .teams { font-size: 18px; font-weight: 700; letter-spacing:-.01em; display:flex; align-items:center; gap: 9px; flex-wrap: wrap; }
   .teams .v { color: var(--ink-faint); font-weight: 600; font-size: 14px; }
+  .teams .score { color: var(--ink); font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+  .teams .score .s-dash { color: var(--ink-faint); font-weight: 500; margin: 0 4px; }
   .teams.placeholder { font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+  .pen-note { margin-top: 4px; font-size: 12px; color: var(--ink-faint); font-weight: 600; letter-spacing:.02em; }
   .meta-row { margin-top: 7px; display:flex; align-items:center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-soft); }
   .badge { font-size: 10.5px; font-weight: 800; letter-spacing:.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); flex: none; }
   .badge.ko { background: var(--surface-2); color: var(--ink-soft); }
@@ -230,101 +233,102 @@
 <script>
 const TZ = { MEX:'America/Mexico_City', MTY:'America/Monterrey', ET:'America/New_York', CT:'America/Chicago', PT:'America/Los_Angeles', VAN:'America/Vancouver', TOR:'America/Toronto' };
 
-// GROUP STAGE — anchored to official BST kick-off (UTC+1). [n, londonISO, home, away, group, venue, city, tz, channel]
+// GROUP STAGE — anchored to official BST kick-off (UTC+1). [n, londonISO, home, away, group, venue, city, tz, channel, score?]
+// score is [home, away] for a regular result or [home, away, homePens, awayPens] if decided on penalties.
 const G = [
-  [1,'2026-06-11T20:00:00+01:00','Mexico','South Africa','A','Estadio Azteca','Mexico City',TZ.MEX,'ITV'],
-  [2,'2026-06-12T03:00:00+01:00','South Korea','Czechia','A','Estadio Akron','Guadalajara',TZ.MEX,'ITV'],
-  [3,'2026-06-12T20:00:00+01:00','Canada','Bosnia and Herzegovina','B','BMO Field','Toronto',TZ.TOR,'BBC'],
-  [4,'2026-06-13T02:00:00+01:00','USA','Paraguay','D','SoFi Stadium','Los Angeles',TZ.PT,'BBC'],
-  [5,'2026-06-14T02:00:00+01:00','Haiti','Scotland','C','Gillette Stadium','Boston',TZ.ET,'BBC'],
-  [6,'2026-06-14T05:00:00+01:00','Australia','Türkiye','D','BC Place','Vancouver',TZ.VAN,'ITV'],
-  [7,'2026-06-13T23:00:00+01:00','Brazil','Morocco','C','MetLife Stadium','New York/New Jersey',TZ.ET,'BBC'],
-  [8,'2026-06-13T20:00:00+01:00','Qatar','Switzerland','B',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV'],
-  [9,'2026-06-15T00:00:00+01:00','Ivory Coast','Ecuador','E','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC'],
-  [10,'2026-06-14T18:00:00+01:00','Germany','Curaçao','E','NRG Stadium','Houston',TZ.CT,'ITV'],
-  [11,'2026-06-14T21:00:00+01:00','Netherlands','Japan','F','AT&T Stadium','Dallas',TZ.CT,'ITV'],
-  [12,'2026-06-15T03:00:00+01:00','Sweden','Tunisia','F','Estadio BBVA','Monterrey',TZ.MTY,'ITV'],
-  [13,'2026-06-15T23:00:00+01:00','Saudi Arabia','Uruguay','H','Hard Rock Stadium','Miami',TZ.ET,'ITV'],
-  [14,'2026-06-15T17:00:00+01:00','Spain','Cape Verde','H','Mercedes-Benz Stadium','Atlanta',TZ.ET,'ITV'],
-  [15,'2026-06-16T02:00:00+01:00','Iran','New Zealand','G','SoFi Stadium','Los Angeles',TZ.PT,'BBC'],
-  [16,'2026-06-15T20:00:00+01:00','Belgium','Egypt','G','Lumen Field','Seattle',TZ.PT,'BBC'],
-  [17,'2026-06-16T20:00:00+01:00','France','Senegal','I','MetLife Stadium','New York/New Jersey',TZ.ET,'BBC'],
-  [18,'2026-06-16T23:00:00+01:00','Iraq','Norway','I','Gillette Stadium','Boston',TZ.ET,'BBC'],
-  [19,'2026-06-17T02:00:00+01:00','Argentina','Algeria','J','Arrowhead Stadium','Kansas City',TZ.CT,'ITV'],
-  [20,'2026-06-17T05:00:00+01:00','Austria','Jordan','J',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'BBC'],
-  [21,'2026-06-18T00:00:00+01:00','Ghana','Panama','L','BMO Field','Toronto',TZ.TOR,'ITV'],
-  [22,'2026-06-17T21:00:00+01:00','England','Croatia','L','AT&T Stadium','Dallas',TZ.CT,'ITV'],
-  [23,'2026-06-17T18:00:00+01:00','Portugal','Congo DR','K','NRG Stadium','Houston',TZ.CT,'BBC'],
-  [24,'2026-06-18T03:00:00+01:00','Uzbekistan','Colombia','K','Estadio Azteca','Mexico City',TZ.MEX,'BBC'],
-  [25,'2026-06-18T17:00:00+01:00','Czechia','South Africa','A','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
-  [26,'2026-06-18T20:00:00+01:00','Switzerland','Bosnia and Herzegovina','B','SoFi Stadium','Los Angeles',TZ.PT,'ITV'],
-  [27,'2026-06-18T23:00:00+01:00','Canada','Qatar','B','BC Place','Vancouver',TZ.VAN,'ITV'],
-  [28,'2026-06-19T02:00:00+01:00','Mexico','South Korea','A','Estadio Akron','Guadalajara',TZ.MEX,'BBC'],
-  [29,'2026-06-20T01:30:00+01:00','Brazil','Haiti','C','Lincoln Financial Field','Philadelphia',TZ.ET,'ITV'],
-  [30,'2026-06-19T23:00:00+01:00','Scotland','Morocco','C','Gillette Stadium','Boston',TZ.ET,'ITV'],
-  [31,'2026-06-20T04:00:00+01:00','Türkiye','Paraguay','D',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV'],
-  [32,'2026-06-19T20:00:00+01:00','USA','Australia','D','Lumen Field','Seattle',TZ.PT,'BBC'],
-  [33,'2026-06-20T21:00:00+01:00','Germany','Ivory Coast','E','BMO Field','Toronto',TZ.TOR,'ITV'],
-  [34,'2026-06-21T01:00:00+01:00','Ecuador','Curaçao','E','Arrowhead Stadium','Kansas City',TZ.CT,'BBC'],
-  [35,'2026-06-20T18:00:00+01:00','Netherlands','Sweden','F','NRG Stadium','Houston',TZ.CT,'BBC'],
-  [36,'2026-06-21T05:00:00+01:00','Tunisia','Japan','F','Estadio BBVA','Monterrey',TZ.MTY,'BBC'],
-  [37,'2026-06-21T23:00:00+01:00','Uruguay','Cape Verde','H','Hard Rock Stadium','Miami',TZ.ET,'BBC'],
-  [38,'2026-06-21T17:00:00+01:00','Spain','Saudi Arabia','H','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
-  [39,'2026-06-21T20:00:00+01:00','Belgium','Iran','G','SoFi Stadium','Los Angeles',TZ.PT,'ITV'],
-  [40,'2026-06-22T02:00:00+01:00','New Zealand','Egypt','G','BC Place','Vancouver',TZ.VAN,'ITV'],
-  [41,'2026-06-23T01:00:00+01:00','Norway','Senegal','I','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV'],
-  [42,'2026-06-22T22:00:00+01:00','France','Iraq','I','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC'],
-  [43,'2026-06-22T18:00:00+01:00','Argentina','Austria','J','AT&T Stadium','Dallas',TZ.CT,'BBC'],
-  [44,'2026-06-23T04:00:00+01:00','Jordan','Algeria','J',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV'],
-  [45,'2026-06-23T21:00:00+01:00','England','Ghana','L','Gillette Stadium','Boston',TZ.ET,'BBC'],
-  [46,'2026-06-24T00:00:00+01:00','Panama','Croatia','L','BMO Field','Toronto',TZ.TOR,'BBC'],
-  [47,'2026-06-23T18:00:00+01:00','Portugal','Uzbekistan','K','NRG Stadium','Houston',TZ.CT,'ITV'],
-  [48,'2026-06-24T03:00:00+01:00','Colombia','Congo DR','K','Estadio Akron','Guadalajara',TZ.MEX,'ITV'],
-  [49,'2026-06-24T23:00:00+01:00','Scotland','Brazil','C','Hard Rock Stadium','Miami',TZ.ET,'BBC'],
-  [50,'2026-06-24T23:00:00+01:00','Morocco','Haiti','C','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
-  [51,'2026-06-24T20:00:00+01:00','Switzerland','Canada','B','BC Place','Vancouver',TZ.VAN,'ITV'],
-  [52,'2026-06-24T20:00:00+01:00','Bosnia and Herzegovina','Qatar','B','Lumen Field','Seattle',TZ.PT,'ITV'],
-  [53,'2026-06-25T02:00:00+01:00','Czechia','Mexico','A','Estadio Azteca','Mexico City',TZ.MEX,'BBC'],
-  [54,'2026-06-25T02:00:00+01:00','South Africa','South Korea','A','Estadio BBVA','Monterrey',TZ.MTY,'BBC'],
-  [55,'2026-06-25T21:00:00+01:00','Curaçao','Ivory Coast','E','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC'],
-  [56,'2026-06-25T21:00:00+01:00','Ecuador','Germany','E','MetLife Stadium','New York/New Jersey',TZ.ET,'BBC'],
-  [57,'2026-06-26T00:00:00+01:00','Japan','Sweden','F','AT&T Stadium','Dallas',TZ.CT,'BBC'],
-  [58,'2026-06-26T00:00:00+01:00','Tunisia','Netherlands','F','Arrowhead Stadium','Kansas City',TZ.CT,'BBC'],
-  [59,'2026-06-26T03:00:00+01:00','Türkiye','USA','D','SoFi Stadium','Los Angeles',TZ.PT,'ITV'],
-  [60,'2026-06-26T03:00:00+01:00','Paraguay','Australia','D',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV'],
-  [61,'2026-06-26T20:00:00+01:00','Norway','France','I','Gillette Stadium','Boston',TZ.ET,'ITV'],
-  [62,'2026-06-26T20:00:00+01:00','Senegal','Iraq','I','BMO Field','Toronto',TZ.TOR,'ITV'],
-  [63,'2026-06-27T04:00:00+01:00','Egypt','Iran','G','Lumen Field','Seattle',TZ.PT,'BBC'],
-  [64,'2026-06-27T04:00:00+01:00','New Zealand','Belgium','G','BC Place','Vancouver',TZ.VAN,'BBC'],
-  [65,'2026-06-27T01:00:00+01:00','Cape Verde','Saudi Arabia','H','NRG Stadium','Houston',TZ.CT,'ITV'],
-  [66,'2026-06-27T01:00:00+01:00','Uruguay','Spain','H','Estadio Akron','Guadalajara',TZ.MEX,'ITV'],
-  [67,'2026-06-27T22:00:00+01:00','Panama','England','L','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV'],
-  [68,'2026-06-27T22:00:00+01:00','Croatia','Ghana','L','Lincoln Financial Field','Philadelphia',TZ.ET,'ITV'],
-  [69,'2026-06-28T03:00:00+01:00','Algeria','Austria','J','Arrowhead Stadium','Kansas City',TZ.CT,'BBC'],
-  [70,'2026-06-28T03:00:00+01:00','Jordan','Argentina','J','AT&T Stadium','Dallas',TZ.CT,'BBC'],
-  [71,'2026-06-28T00:30:00+01:00','Colombia','Portugal','K','Hard Rock Stadium','Miami',TZ.ET,'BBC'],
-  [72,'2026-06-28T00:30:00+01:00','Congo DR','Uzbekistan','K','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
+  [1,'2026-06-11T20:00:00+01:00','Mexico','South Africa','A','Estadio Azteca','Mexico City',TZ.MEX,'ITV',[2,0]],
+  [2,'2026-06-12T03:00:00+01:00','South Korea','Czechia','A','Estadio Akron','Guadalajara',TZ.MEX,'ITV',[2,1]],
+  [3,'2026-06-12T20:00:00+01:00','Canada','Bosnia and Herzegovina','B','BMO Field','Toronto',TZ.TOR,'BBC',[1,1]],
+  [4,'2026-06-13T02:00:00+01:00','USA','Paraguay','D','SoFi Stadium','Los Angeles',TZ.PT,'BBC',[4,1]],
+  [5,'2026-06-14T02:00:00+01:00','Haiti','Scotland','C','Gillette Stadium','Boston',TZ.ET,'BBC',[0,1]],
+  [6,'2026-06-14T05:00:00+01:00','Australia','Türkiye','D','BC Place','Vancouver',TZ.VAN,'ITV',[2,0]],
+  [7,'2026-06-13T23:00:00+01:00','Brazil','Morocco','C','MetLife Stadium','New York/New Jersey',TZ.ET,'BBC',[1,1]],
+  [8,'2026-06-13T20:00:00+01:00','Qatar','Switzerland','B',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV',[1,1]],
+  [9,'2026-06-15T00:00:00+01:00','Ivory Coast','Ecuador','E','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC',[1,0]],
+  [10,'2026-06-14T18:00:00+01:00','Germany','Curaçao','E','NRG Stadium','Houston',TZ.CT,'ITV',[7,1]],
+  [11,'2026-06-14T21:00:00+01:00','Netherlands','Japan','F','AT&T Stadium','Dallas',TZ.CT,'ITV',[2,2]],
+  [12,'2026-06-15T03:00:00+01:00','Sweden','Tunisia','F','Estadio BBVA','Monterrey',TZ.MTY,'ITV',[5,1]],
+  [13,'2026-06-15T23:00:00+01:00','Saudi Arabia','Uruguay','H','Hard Rock Stadium','Miami',TZ.ET,'ITV',[1,1]],
+  [14,'2026-06-15T17:00:00+01:00','Spain','Cape Verde','H','Mercedes-Benz Stadium','Atlanta',TZ.ET,'ITV',[0,0]],
+  [15,'2026-06-16T02:00:00+01:00','Iran','New Zealand','G','SoFi Stadium','Los Angeles',TZ.PT,'BBC',[2,2]],
+  [16,'2026-06-15T20:00:00+01:00','Belgium','Egypt','G','Lumen Field','Seattle',TZ.PT,'BBC',[1,1]],
+  [17,'2026-06-16T20:00:00+01:00','France','Senegal','I','MetLife Stadium','New York/New Jersey',TZ.ET,'BBC',[3,1]],
+  [18,'2026-06-16T23:00:00+01:00','Iraq','Norway','I','Gillette Stadium','Boston',TZ.ET,'BBC',[1,4]],
+  [19,'2026-06-17T02:00:00+01:00','Argentina','Algeria','J','Arrowhead Stadium','Kansas City',TZ.CT,'ITV',[3,0]],
+  [20,'2026-06-17T05:00:00+01:00','Austria','Jordan','J',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'BBC',[3,1]],
+  [21,'2026-06-18T00:00:00+01:00','Ghana','Panama','L','BMO Field','Toronto',TZ.TOR,'ITV',[1,0]],
+  [22,'2026-06-17T21:00:00+01:00','England','Croatia','L','AT&T Stadium','Dallas',TZ.CT,'ITV',[4,2]],
+  [23,'2026-06-17T18:00:00+01:00','Portugal','Congo DR','K','NRG Stadium','Houston',TZ.CT,'BBC',[1,1]],
+  [24,'2026-06-18T03:00:00+01:00','Uzbekistan','Colombia','K','Estadio Azteca','Mexico City',TZ.MEX,'BBC',[1,3]],
+  [25,'2026-06-18T17:00:00+01:00','Czechia','South Africa','A','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC',[1,1]],
+  [26,'2026-06-18T20:00:00+01:00','Switzerland','Bosnia and Herzegovina','B','SoFi Stadium','Los Angeles',TZ.PT,'ITV',[4,1]],
+  [27,'2026-06-18T23:00:00+01:00','Canada','Qatar','B','BC Place','Vancouver',TZ.VAN,'ITV',[6,0]],
+  [28,'2026-06-19T02:00:00+01:00','Mexico','South Korea','A','Estadio Akron','Guadalajara',TZ.MEX,'BBC',[1,0]],
+  [29,'2026-06-20T01:30:00+01:00','Brazil','Haiti','C','Lincoln Financial Field','Philadelphia',TZ.ET,'ITV',[3,0]],
+  [30,'2026-06-19T23:00:00+01:00','Scotland','Morocco','C','Gillette Stadium','Boston',TZ.ET,'ITV',[0,1]],
+  [31,'2026-06-20T04:00:00+01:00','Türkiye','Paraguay','D',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV',[0,1]],
+  [32,'2026-06-19T20:00:00+01:00','USA','Australia','D','Lumen Field','Seattle',TZ.PT,'BBC',[2,0]],
+  [33,'2026-06-20T21:00:00+01:00','Germany','Ivory Coast','E','BMO Field','Toronto',TZ.TOR,'ITV',[2,1]],
+  [34,'2026-06-21T01:00:00+01:00','Ecuador','Curaçao','E','Arrowhead Stadium','Kansas City',TZ.CT,'BBC',[0,0]],
+  [35,'2026-06-20T18:00:00+01:00','Netherlands','Sweden','F','NRG Stadium','Houston',TZ.CT,'BBC',[5,1]],
+  [36,'2026-06-21T05:00:00+01:00','Tunisia','Japan','F','Estadio BBVA','Monterrey',TZ.MTY,'BBC',[0,4]],
+  [37,'2026-06-21T23:00:00+01:00','Uruguay','Cape Verde','H','Hard Rock Stadium','Miami',TZ.ET,'BBC',[2,2]],
+  [38,'2026-06-21T17:00:00+01:00','Spain','Saudi Arabia','H','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC',[4,0]],
+  [39,'2026-06-21T20:00:00+01:00','Belgium','Iran','G','SoFi Stadium','Los Angeles',TZ.PT,'ITV',[0,0]],
+  [40,'2026-06-22T02:00:00+01:00','New Zealand','Egypt','G','BC Place','Vancouver',TZ.VAN,'ITV',[1,3]],
+  [41,'2026-06-23T01:00:00+01:00','Norway','Senegal','I','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV',[3,2]],
+  [42,'2026-06-22T22:00:00+01:00','France','Iraq','I','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC',[3,0]],
+  [43,'2026-06-22T18:00:00+01:00','Argentina','Austria','J','AT&T Stadium','Dallas',TZ.CT,'BBC',[2,0]],
+  [44,'2026-06-23T04:00:00+01:00','Jordan','Algeria','J',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV',[1,2]],
+  [45,'2026-06-23T21:00:00+01:00','England','Ghana','L','Gillette Stadium','Boston',TZ.ET,'BBC',[0,0]],
+  [46,'2026-06-24T00:00:00+01:00','Panama','Croatia','L','BMO Field','Toronto',TZ.TOR,'BBC',[0,1]],
+  [47,'2026-06-23T18:00:00+01:00','Portugal','Uzbekistan','K','NRG Stadium','Houston',TZ.CT,'ITV',[5,0]],
+  [48,'2026-06-24T03:00:00+01:00','Colombia','Congo DR','K','Estadio Akron','Guadalajara',TZ.MEX,'ITV',[1,0]],
+  [49,'2026-06-24T23:00:00+01:00','Scotland','Brazil','C','Hard Rock Stadium','Miami',TZ.ET,'BBC',[0,3]],
+  [50,'2026-06-24T23:00:00+01:00','Morocco','Haiti','C','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC',[4,2]],
+  [51,'2026-06-24T20:00:00+01:00','Switzerland','Canada','B','BC Place','Vancouver',TZ.VAN,'ITV',[2,1]],
+  [52,'2026-06-24T20:00:00+01:00','Bosnia and Herzegovina','Qatar','B','Lumen Field','Seattle',TZ.PT,'ITV',[3,1]],
+  [53,'2026-06-25T02:00:00+01:00','Czechia','Mexico','A','Estadio Azteca','Mexico City',TZ.MEX,'BBC',[0,3]],
+  [54,'2026-06-25T02:00:00+01:00','South Africa','South Korea','A','Estadio BBVA','Monterrey',TZ.MTY,'BBC',[1,0]],
+  [55,'2026-06-25T21:00:00+01:00','Curaçao','Ivory Coast','E','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC',[0,2]],
+  [56,'2026-06-25T21:00:00+01:00','Ecuador','Germany','E','MetLife Stadium','New York/New Jersey',TZ.ET,'BBC',[2,1]],
+  [57,'2026-06-26T00:00:00+01:00','Japan','Sweden','F','AT&T Stadium','Dallas',TZ.CT,'BBC',[1,1]],
+  [58,'2026-06-26T00:00:00+01:00','Tunisia','Netherlands','F','Arrowhead Stadium','Kansas City',TZ.CT,'BBC',[1,3]],
+  [59,'2026-06-26T03:00:00+01:00','Türkiye','USA','D','SoFi Stadium','Los Angeles',TZ.PT,'ITV',[3,2]],
+  [60,'2026-06-26T03:00:00+01:00','Paraguay','Australia','D',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'ITV',[0,0]],
+  [61,'2026-06-26T20:00:00+01:00','Norway','France','I','Gillette Stadium','Boston',TZ.ET,'ITV',[1,4]],
+  [62,'2026-06-26T20:00:00+01:00','Senegal','Iraq','I','BMO Field','Toronto',TZ.TOR,'ITV',[5,0]],
+  [63,'2026-06-27T04:00:00+01:00','Egypt','Iran','G','Lumen Field','Seattle',TZ.PT,'BBC',[1,1]],
+  [64,'2026-06-27T04:00:00+01:00','New Zealand','Belgium','G','BC Place','Vancouver',TZ.VAN,'BBC',[1,5]],
+  [65,'2026-06-27T01:00:00+01:00','Cape Verde','Saudi Arabia','H','NRG Stadium','Houston',TZ.CT,'ITV',[0,0]],
+  [66,'2026-06-27T01:00:00+01:00','Uruguay','Spain','H','Estadio Akron','Guadalajara',TZ.MEX,'ITV',[0,1]],
+  [67,'2026-06-27T22:00:00+01:00','Panama','England','L','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV',[0,2]],
+  [68,'2026-06-27T22:00:00+01:00','Croatia','Ghana','L','Lincoln Financial Field','Philadelphia',TZ.ET,'ITV',[2,1]],
+  [69,'2026-06-28T03:00:00+01:00','Algeria','Austria','J','Arrowhead Stadium','Kansas City',TZ.CT,'BBC',[3,3]],
+  [70,'2026-06-28T03:00:00+01:00','Jordan','Argentina','J','AT&T Stadium','Dallas',TZ.CT,'BBC',[1,3]],
+  [71,'2026-06-28T00:30:00+01:00','Colombia','Portugal','K','Hard Rock Stadium','Miami',TZ.ET,'BBC',[0,0]],
+  [72,'2026-06-28T00:30:00+01:00','Congo DR','Uzbekistan','K','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC',[3,1]],
 ];
 
 // KNOCKOUTS — anchored to Eastern (EDT, -04:00). [n, etISO, home, away, round, venue, city, tz, channel]
 // home/away are real team names once confirmed, otherwise placeholders like 'Winner M74'.
 const K = [
-  [73,'2026-06-28T15:00:00-04:00','South Africa','Canada','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'ITV'],
-  [74,'2026-06-29T16:30:00-04:00','Germany','Paraguay','Round of 32','Gillette Stadium','Boston',TZ.ET,'BBC'],
-  [75,'2026-06-29T21:00:00-04:00','Netherlands','Morocco','Round of 32','Estadio BBVA','Monterrey',TZ.MTY,'ITV'],
-  [76,'2026-06-29T13:00:00-04:00','Brazil','Japan','Round of 32','NRG Stadium','Houston',TZ.CT,'ITV'],
-  [77,'2026-06-30T17:00:00-04:00','France','Sweden','Round of 32','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV'],
-  [78,'2026-06-30T13:00:00-04:00','Ivory Coast','Norway','Round of 32','AT&T Stadium','Dallas',TZ.CT,'BBC'],
-  [79,'2026-06-30T21:00:00-04:00','Mexico','Ecuador','Round of 32','Estadio Azteca','Mexico City',TZ.MEX,'ITV'],
-  [80,'2026-07-01T12:00:00-04:00','England','Congo DR','Round of 32','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC'],
-  [81,'2026-07-01T20:00:00-04:00','USA','Bosnia and Herzegovina','Round of 32',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'BBC'],
-  [82,'2026-07-01T16:00:00-04:00','Belgium','Senegal','Round of 32','Lumen Field','Seattle',TZ.PT,'ITV'],
-  [83,'2026-07-02T19:00:00-04:00','Portugal','Croatia','Round of 32','BMO Field','Toronto',TZ.TOR,'BBC'],
-  [84,'2026-07-02T15:00:00-04:00','Spain','Austria','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'BBC'],
-  [85,'2026-07-02T23:00:00-04:00','Switzerland','Algeria','Round of 32','BC Place','Vancouver',TZ.VAN,'BBC'],
+  [73,'2026-06-28T15:00:00-04:00','South Africa','Canada','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'ITV',[0,1]],
+  [74,'2026-06-29T16:30:00-04:00','Germany','Paraguay','Round of 32','Gillette Stadium','Boston',TZ.ET,'BBC',[1,1,3,4]],
+  [75,'2026-06-29T21:00:00-04:00','Netherlands','Morocco','Round of 32','Estadio BBVA','Monterrey',TZ.MTY,'ITV',[1,1,2,3]],
+  [76,'2026-06-29T13:00:00-04:00','Brazil','Japan','Round of 32','NRG Stadium','Houston',TZ.CT,'ITV',[2,1]],
+  [77,'2026-06-30T17:00:00-04:00','France','Sweden','Round of 32','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV',[3,0]],
+  [78,'2026-06-30T13:00:00-04:00','Ivory Coast','Norway','Round of 32','AT&T Stadium','Dallas',TZ.CT,'BBC',[1,2]],
+  [79,'2026-06-30T21:00:00-04:00','Mexico','Ecuador','Round of 32','Estadio Azteca','Mexico City',TZ.MEX,'ITV',[2,0]],
+  [80,'2026-07-01T12:00:00-04:00','England','Congo DR','Round of 32','Mercedes-Benz Stadium','Atlanta',TZ.ET,'BBC',[2,1]],
+  [81,'2026-07-01T20:00:00-04:00','USA','Bosnia and Herzegovina','Round of 32',"Levi's Stadium",'San Francisco Bay Area',TZ.PT,'BBC',[2,0]],
+  [82,'2026-07-01T16:00:00-04:00','Belgium','Senegal','Round of 32','Lumen Field','Seattle',TZ.PT,'ITV',[3,2]],
+  [83,'2026-07-02T19:00:00-04:00','Portugal','Croatia','Round of 32','BMO Field','Toronto',TZ.TOR,'BBC',[2,1]],
+  [84,'2026-07-02T15:00:00-04:00','Spain','Austria','Round of 32','SoFi Stadium','Los Angeles',TZ.PT,'BBC',[3,0]],
+  [85,'2026-07-02T23:00:00-04:00','Switzerland','Algeria','Round of 32','BC Place','Vancouver',TZ.VAN,'BBC',[2,0]],
   [86,'2026-07-03T18:00:00-04:00','Argentina','Cape Verde','Round of 32','Hard Rock Stadium','Miami',TZ.ET,'ITV'],
   [87,'2026-07-03T21:30:00-04:00','Colombia','Ghana','Round of 32','Arrowhead Stadium','Kansas City',TZ.CT,'ITV'],
-  [88,'2026-07-03T14:00:00-04:00','Australia','Egypt','Round of 32','AT&T Stadium','Dallas',TZ.CT,'BBC'],
+  [88,'2026-07-03T14:00:00-04:00','Australia','Egypt','Round of 32','AT&T Stadium','Dallas',TZ.CT,'BBC',[1,1,2,4]],
   [89,'2026-07-04T17:00:00-04:00','Paraguay','France','Round of 16','Lincoln Financial Field','Philadelphia',TZ.ET,'BBC'],
   [90,'2026-07-04T13:00:00-04:00','Canada','Morocco','Round of 16','NRG Stadium','Houston',TZ.CT,'ITV'],
   [91,'2026-07-05T16:00:00-04:00','Brazil','Norway','Round of 16','MetLife Stadium','New York/New Jersey',TZ.ET,'ITV'],
@@ -345,10 +349,10 @@ const K = [
 
 const PLACEHOLDER_TEAM = /^(Winner|Runner-up|3rd|Loser)\b/;
 const matches = [];
-G.forEach(r => matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:r[4], venue:r[5], city:r[6], tz:r[7], ch:r[8], round:'Group', ko:false, teamsKnown:true }));
+G.forEach(r => matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:r[4], venue:r[5], city:r[6], tz:r[7], ch:r[8], score:r[9] ?? null, round:'Group', ko:false, teamsKnown:true }));
 K.forEach(r => {
   const teamsKnown = !PLACEHOLDER_TEAM.test(r[2]) && !PLACEHOLDER_TEAM.test(r[3]);
-  matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:null, venue:r[5], city:r[6], tz:r[7], ch:r[8], round:r[4], ko:true, teamsKnown });
+  matches.push({ n:r[0], inst:new Date(r[1]), home:r[2], away:r[3], group:null, venue:r[5], city:r[6], tz:r[7], ch:r[8], score:r[9] ?? null, round:r[4], ko:true, teamsKnown });
 });
 
 // Display time zone (defaults to browser, user-changeable)
@@ -505,7 +509,9 @@ function render(){
       const time = dispTime(m.inst);
       const ldate = dispDate(m.inst);
       const abbr = tzAbbr(m.inst);
-      const teamsHtml = m.teamsKnown ? `<div class="teams">${m.home} <span class="v">v</span> ${m.away}</div>` : `<div class="teams placeholder">${m.home} v ${m.away}</div>`;
+      const sep = m.score ? `<span class="score">${m.score[0]}<span class="s-dash">–</span>${m.score[1]}</span>` : `<span class="v">v</span>`;
+      const teamsHtml = m.teamsKnown ? `<div class="teams">${m.home} ${sep} ${m.away}</div>` : `<div class="teams placeholder">${m.home} v ${m.away}</div>`;
+      const penHtml = (m.score && m.score.length === 4) ? `<div class="pen-note">${(m.score[2] > m.score[3] ? m.home : m.away)} won ${Math.max(m.score[2],m.score[3])}–${Math.min(m.score[2],m.score[3])} on penalties</div>` : '';
       const badge = m.ko ? `<span class="badge ko">${m.round}</span>` : `<span class="badge">Group ${m.group}</span>`;
       html += `
         <div class="match">
@@ -517,6 +523,7 @@ function render(){
           </div>
           <div class="info">
             ${teamsHtml}
+            ${penHtml}
             <div class="meta-row">
               ${badge}
               <span class="venue">${m.venue} <span class="city">· ${m.city}</span></span>
